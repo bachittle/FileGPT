@@ -24,7 +24,7 @@ def write_output(content):
         messages=[message]
     )
 
-    sys.stdout.write(completion.choices[0].message)
+    sys.stdout.write(completion.choices[0].message.content)
 
 def main():
     parser = argparse.ArgumentParser(description="FileGPT - A simple bot that repeats what the user says.")
