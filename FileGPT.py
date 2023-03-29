@@ -7,10 +7,18 @@ import openai
 import logging
 import tempfile
 
+import tiktoken
+
 MODELS = [
     "gpt-3.5-turbo",
     "gpt-4"
 ]
+
+# give a warning if the user tries to use too many tokens
+TOKEN_LIMIT = {
+    "gpt-3.5-turbo": 4096,
+    "gpt-4": 8196 
+}
 
 def setup_logging():
     log_dir = tempfile.gettempdir()
@@ -68,23 +76,33 @@ def get_openai_response(model_name, content):
 
 def write_output(response):
     logging.info("Writing output")
+    response_str = ""
+
     for chunk in response:
         chunk_msg = chunk['choices'][0]['delta']
         if 'content' in chunk_msg:
             sys.stdout.write(chunk_msg['content'])
+            response_str += chunk_msg['content']
             sys.stdout.flush()
+    
+    return response_str
 
 def main():
     setup_logging()
     args = parse_arguments()
     input_content = read_input(args.file)
     model_name = select_model(args.model)
+
+    enc = tiktoken.encoding_for_model(model_name)
+
+    logging.info("Input has %d tokens", len(enc.encode(input_content)))
+
     response = get_openai_response(model_name, input_content)
-    write_output(response)
-    logging.info("FileGPT finished")
+    resp_str = write_output(response)
+    logging.info("FileGPT finished, response has %d tokens", len(enc.encode(resp_str)))
 
 if __name__ == "__main__":
     main()
 
 # (run FileGPT on itself and ask it the question below, using `python FileGPT.py -f FileGPT.py`)
-# what does this program do?
+# come up with some more tools or features that could be made
