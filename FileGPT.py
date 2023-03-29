@@ -1,30 +1,44 @@
+#!/usr/bin/env python
+
 import sys
 import argparse
 import os
 import openai
+import logging
+import tempfile
 
 MODELS = [
     "gpt-3.5-turbo",
     "gpt-4"
 ]
 
+def setup_logging():
+    log_dir = tempfile.gettempdir()
+    log_file = os.path.join(log_dir, "filegpt.log")
+    logging.basicConfig(filename=log_file, level=logging.INFO, format="%(asctime)s [%(levelname)s]: %(message)s")
+    logging.info("Starting FileGPT")
+
+def parse_arguments():
+    parser = argparse.ArgumentParser(description="FileGPT - A simple tool that autocompletes text files.")
+    parser.add_argument("-f", "--file", help="Specify one or more text files as input.", type=str, nargs="+")
+    parser.add_argument("-m", "--model", help="Specify the model to use for autocompletion.", type=str)
+    return parser.parse_args()
+
 def read_input(files=None):
     if files:
+        logging.info("Reading input from files: %s", files)
         contents = []
         for file in files:
             with open(file, "r") as f:
                 contents.append(f.read())
         content = "\n".join(contents)
     else:
+        logging.info("Reading input from stdin")
         print("Reading from stdin (press CTRL+D for linux/mac or Enter+CTRL+Z+Enter for windows to stop)...")
         content = sys.stdin.read()
     return content
 
-def write_output(content, model_name):
-    openai.api_key = os.getenv("OPENAI_API_KEY")
-
-    message = {"role": "user", "content": content}
-    
+def select_model(model_name):
     use_default = True
     for name in MODELS:
         if model_name == name:
@@ -32,17 +46,28 @@ def write_output(content, model_name):
             break
 
     if use_default:
-        # print(f"Using default model: {MODELS[0]}")
-        # print(f"to change this, pass the model as a string, ex: FileGPT.py -m {MODELS[1]}\n")
+        logging.info("Using default model: %s", MODELS[0])
         model_name = MODELS[0]
+    else:
+        logging.info("Using specified model: %s", model_name)
 
-    # print(f"using model {model_name}")
+    return model_name
+
+def get_openai_response(model_name, content):
+    logging.info("Setting up OpenAI API")
+    openai.api_key = os.getenv("OPENAI_API_KEY")
+    message = {"role": "user", "content": content}
+    
+    logging.info("Sending request to OpenAI API")
     response = openai.ChatCompletion.create(
         model=model_name,
         messages=[message],
         stream=True
     )
+    return response
 
+def write_output(response):
+    logging.info("Writing output")
     for chunk in response:
         chunk_msg = chunk['choices'][0]['delta']
         if 'content' in chunk_msg:
@@ -50,16 +75,16 @@ def write_output(content, model_name):
             sys.stdout.flush()
 
 def main():
-    parser = argparse.ArgumentParser(description="FileGPT - A simple tool that autocompletes text files.")
-    parser.add_argument("-f", "--file", help="Specify one or more text files as input.", type=str, nargs="+")
-    parser.add_argument("-m", "--model", help="Specify the model to use for autocompletion.", type=str)
-    args = parser.parse_args()
-
+    setup_logging()
+    args = parse_arguments()
     input_content = read_input(args.file)
-    write_output(input_content, args.model)
+    model_name = select_model(args.model)
+    response = get_openai_response(model_name, input_content)
+    write_output(response)
+    logging.info("FileGPT finished")
 
 if __name__ == "__main__":
     main()
 
-# (autocompete this with `python FileGPT.py -f FileGPT.py`)
+# (run FileGPT on itself and ask it the question below, using `python FileGPT.py -f FileGPT.py`)
 # what does this program do?
