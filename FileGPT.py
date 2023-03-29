@@ -11,6 +11,7 @@ def read_input(files=None):
                 contents.append(f.read())
         content = "\n".join(contents)
     else:
+        print("Reading from stdin (press CTRL+D for linux/mac or Enter+CTRL+Z+Enter for windows to stop)...")
         content = sys.stdin.read()
     return content
 
@@ -27,7 +28,7 @@ def write_output(content):
     sys.stdout.write(completion.choices[0].message.content)
 
 def main():
-    parser = argparse.ArgumentParser(description="FileGPT - A simple bot that repeats what the user says.")
+    parser = argparse.ArgumentParser(description="FileGPT - A simple tool that autocompletes text files.")
     parser.add_argument("-f", "--file", help="Specify one or more text files as input.", type=str, nargs="+")
     args = parser.parse_args()
 
@@ -36,3 +37,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# (autocompete this with `python FileGPT.py -f FileGPT.py`)
+# what does this program do?
