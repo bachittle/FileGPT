@@ -96,7 +96,7 @@ def process_text(model_name: str, input_files: List[str] = None) -> str:
     
     return resp_str
 
-if __name__ == "__main__":
+def main():
     import argparse
     parser = argparse.ArgumentParser(description="FileGPT - A simple tool that autocompletes text files.")
     parser.add_argument("-f", "--file", help="Specify one or more text files as input.", type=str, nargs="+")
@@ -105,5 +105,9 @@ if __name__ == "__main__":
     
     process_text(args.model, args.file)
 
+
+if __name__ == "__main__":
+    main()
+
 # (run FileGPT on itself and ask it the question below, using `python FileGPT.py -f FileGPT.py`)
-# refactor this package such that it can be used as a library
+# How can this code be improved?
