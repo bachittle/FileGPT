@@ -1,20 +1,19 @@
 #!/usr/bin/env python
 
 import sys
-import argparse
 import os
 import openai
 import logging
 import tempfile
 
 import tiktoken
+from typing import List
 
 MODELS = [
     "gpt-3.5-turbo",
     "gpt-4"
 ]
 
-# give a warning if the user tries to use too many tokens
 TOKEN_LIMIT = {
     "gpt-3.5-turbo": 4096,
     "gpt-4": 8196 
@@ -26,13 +25,7 @@ def setup_logging():
     logging.basicConfig(filename=log_file, level=logging.INFO, format="%(asctime)s [%(levelname)s]: %(message)s")
     logging.info("Starting FileGPT")
 
-def parse_arguments():
-    parser = argparse.ArgumentParser(description="FileGPT - A simple tool that autocompletes text files.")
-    parser.add_argument("-f", "--file", help="Specify one or more text files as input.", type=str, nargs="+")
-    parser.add_argument("-m", "--model", help="Specify the model to use for autocompletion.", type=str)
-    return parser.parse_args()
-
-def read_input(files=None):
+def read_input(files: List[str] = None) -> str:
     if files:
         logging.info("Reading input from files: %s", files)
         contents = []
@@ -46,7 +39,8 @@ def read_input(files=None):
         content = sys.stdin.read()
     return content
 
-def select_model(model_name):
+
+def select_model(model_name:str) -> str:
     use_default = True
     for name in MODELS:
         if model_name == name:
@@ -61,7 +55,7 @@ def select_model(model_name):
 
     return model_name
 
-def get_openai_response(model_name, content):
+def get_openai_response(model_name:str, content:str):
     logging.info("Setting up OpenAI API")
     openai.api_key = os.getenv("OPENAI_API_KEY")
     message = {"role": "user", "content": content}
@@ -87,11 +81,10 @@ def write_output(response):
     
     return response_str
 
-def main():
+def process_text(model_name: str, input_files: List[str] = None) -> str:
     setup_logging()
-    args = parse_arguments()
-    input_content = read_input(args.file)
-    model_name = select_model(args.model)
+    input_content = read_input(input_files)
+    model_name = select_model(model_name)
 
     enc = tiktoken.encoding_for_model(model_name)
 
@@ -100,9 +93,17 @@ def main():
     response = get_openai_response(model_name, input_content)
     resp_str = write_output(response)
     logging.info("FileGPT finished, response has %d tokens", len(enc.encode(resp_str)))
+    
+    return resp_str
 
 if __name__ == "__main__":
-    main()
+    import argparse
+    parser = argparse.ArgumentParser(description="FileGPT - A simple tool that autocompletes text files.")
+    parser.add_argument("-f", "--file", help="Specify one or more text files as input.", type=str, nargs="+")
+    parser.add_argument("-m", "--model", help="Specify the model to use for autocompletion.", type=str)
+    args = parser.parse_args()
+    
+    process_text(args.model, args.file)
 
 # (run FileGPT on itself and ask it the question below, using `python FileGPT.py -f FileGPT.py`)
-# come up with some more tools or features that could be made
+# refactor this package such that it can be used as a library
