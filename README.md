@@ -88,3 +88,61 @@ Inside the cave, they found an ancient treasure chest, overflowing with gold and
 As Jack carefully considered his options, he remembered a folk tale his father had once told him about a dragon's weakness: their inability to resist the sound of a beautiful melody. Jack took a deep breath and began to sing the most enchanting song he could muster. As the sweet music filled the cave, the dragon's fiery eyes softened, and it listened intently, captivated by the melody.
 
 Seizing the opportunity, Jack and Toby made their way past the enchanted dragon, out of the cave, and back into the sunlight. They returned to their village, treasure in hand, and shared their incredible adventure with the villagers. From that day on, Jack was known as a hero in the small village, and his tale of bravery and wit was passed down through generations. And as for Toby, he was never far from Jack's side, the two forging a lifelong bond the likes of which the village had never seen.
+```
+
+add a new section to this readme detailing the new use of personalities
+
+## Personalities
+
+FileGPT now includes personalities that allow you to adjust the style and format of the output. Currently, there are two available personalities:
+
+1. Coder: Generates code-based responses, usually with comments for user interaction.
+2. Writer: Generates text-based content in Markdown format, suitable for documentation, blog posts, and other textual use cases.
+
+To specify a personality when using FileGPT, use the `-p` or `--personality` flag:
+
+```
+filegpt -f input.txt -p coder
+filegpt -f input.txt -p writer
+```
+
+You can also list the available personalities by running the following command:
+
+```
+filegpt p-ls
+```
+
+### Example with Personalities
+
+Let's create an example input file for FileGPT using the 'coder' personality. Write the following content to a file named `code_input.txt`:
+
+```
+# Calculate the factorial of a number
+def factorial(n):
+    if n == 0:
+        return 1
+```
+
+Now, we can use FileGPT to autocomplete the code:
+
+```
+filegpt -f code_input.txt -p coder
+```
+
+Sample output:
+
+```
+# Calculate the factorial of a number
+def factorial(n):
+    if n == 0:
+        return 1
+    else:
+        return n * factorial(n - 1)
+
+# Now, let's test the factorial function
+n = 5
+result = factorial(n)
+print(f"The factorial of {n} is {result}")
+```
+
+When using the 'writer' personality, FileGPT will produce text-based content with Markdown formatting. This can be useful for generating documentation or writing blog posts.

@@ -1,5 +1,6 @@
 PERSONALITIES = [
     "coder",
+    "writer",
 ]
 
 MAP_PERSONALITY_TO_OPENAI = {
@@ -18,6 +19,11 @@ def fibonacci(n):
 
 Do not use markdown or html in your responses.
 Do not wrap your response in backticks (```python)
+""",
+    "writer": {"role": "system", "content": """
+You give your responses in markdown.
+You can use markdown to format your responses.
+You write technical documentation, blog posts, and other text-based content.
 """}
 }
 
