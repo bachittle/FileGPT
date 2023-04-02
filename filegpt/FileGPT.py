@@ -1,10 +1,13 @@
+# this is the code for FileGPT.py
 #!/usr/bin/env python
 
 import sys
 import os
-import openai
 import logging
 import tempfile
+
+from openai_wrapper import get_openai_response
+from personalities import PERSONALITIES, get_personality
 
 import tiktoken
 from typing import List
@@ -55,19 +58,6 @@ def select_model(model_name:str) -> str:
 
     return model_name
 
-def get_openai_response(model_name:str, content:str):
-    logging.info("Setting up OpenAI API")
-    openai.api_key = os.getenv("OPENAI_API_KEY")
-    message = {"role": "user", "content": content}
-    
-    logging.info("Sending request to OpenAI API")
-    response = openai.ChatCompletion.create(
-        model=model_name,
-        messages=[message],
-        stream=True
-    )
-    return response
-
 def write_output(response):
     logging.info("Writing output")
     response_str = ""
@@ -90,7 +80,7 @@ def process_text(model_name: str, input_files: List[str] = None) -> str:
 
     logging.info("Input has %d tokens", len(enc.encode(input_content)))
 
-    response = get_openai_response(model_name, input_content)
+    response = get_openai_response(model_name, [{"role": "user", "content": input_content}])
     resp_str = write_output(response)
     logging.info("FileGPT finished, response has %d tokens", len(enc.encode(resp_str)))
     
@@ -101,7 +91,18 @@ def main():
     parser = argparse.ArgumentParser(description="FileGPT - A simple tool that autocompletes text files.")
     parser.add_argument("-f", "--file", help="Specify one or more text files as input.", type=str, nargs="+")
     parser.add_argument("-m", "--model", help="Specify the model to use for autocompletion.", type=str)
+    parser.add_argument("-p", "--personality", help="Specify the personality to use for autocompletion.", type=str)
+
+    parser.add_argument("personalities", help="Perform operations on available personalities.", type=str, nargs="?", choices=["p-ls"])
     args = parser.parse_args()
+
+    if args.personalities:
+        # handle personalities argument
+        if args.personalities == "p-ls":
+            # list available personalities
+            print(f"Available personalities: {', '.join(PERSONALITIES)}")
+            return
+
     
     process_text(args.model, args.file)
 
@@ -109,5 +110,5 @@ def main():
 if __name__ == "__main__":
     main()
 
-# (run FileGPT on itself and ask it the question below, using `python FileGPT.py -f FileGPT.py`)
+# (run FileGPT on itself and ask it the question below, using `filegpt -f FileGPT.py`)
 # How can this code be improved?
