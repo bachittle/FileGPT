@@ -9,27 +9,17 @@ To use FileGPT, you need:
 1. An OpenAI API key (sign up for one [here](https://platform.openai.com))
 2. Python 3.6 or later
 
+## Installation
+
+Install FileGPT directly from PyPI:
+
+```
+pip install filegpt
+```
+
 ## Setup
 
-1. Clone this repository:
-
-```
-git clone https://github.com/bachittle/FileGPT.git
-```
-
-2. Change directory to the cloned repository:
-
-```
-cd FileGPT
-```
-
-3. Install the required dependencies:
-
-```
-pip install -r requirements.txt
-```
-
-4. Set the OpenAI API key as an environment variable:
+Set the OpenAI API key as an environment variable:
 
 ```
 export OPENAI_API_KEY=<your_api_key>
@@ -42,7 +32,7 @@ export OPENAI_API_KEY=<your_api_key>
 To use FileGPT, run the following command:
 
 ```
-python FileGPT.py
+filegpt
 ```
 
 You can provide input to FileGPT in two ways:
@@ -50,19 +40,20 @@ You can provide input to FileGPT in two ways:
 1. By passing one or more input text files as arguments, using the `-f` or `--file` flag:
 
 ```
-python FileGPT.py -f input1.txt input2.txt
+filegpt -f input1.txt input2.txt
 ```
 
 2. By providing input through standard input (stdin):
 
 ```
-echo "Hello, this is FileGPT!" | python FileGPT.py
+echo "Hello, this is FileGPT!" | filegpt
 ```
 
 To specify the model to use for autocompletion, use the `-m` or `--model` flag:
 
 ```
-python FileGPT.py -f input.txt -m gpt-3.5-turbo
+filegpt -f input.txt -m gpt-3.5-turbo # old model
+filegpt -f input.txt -m gpt-4 # new model
 ```
 
 If no model is specified, FileGPT will use the default model (gpt-3.5-turbo).
@@ -70,7 +61,6 @@ If no model is specified, FileGPT will use the default model (gpt-3.5-turbo).
 ## Logging
 
 FileGPT generates log messages for major operations and saves them to a local log file named `filegpt.log`. You can check this file for any issues or status updates during execution.
-
 
 ## Example
 
@@ -83,7 +73,7 @@ Once upon a time, in a small village near a dense forest,
 Now, we can use FileGPT to autocomplete the story:
 
 ```
-python FileGPT.py -f input.txt
+filegpt -f input.txt
 ```
 
 Sample output:
