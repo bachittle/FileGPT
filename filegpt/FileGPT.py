@@ -7,10 +7,12 @@ import logging
 import tempfile
 
 from openai_wrapper import get_openai_response
-from personalities import PERSONALITIES, get_personality
+from personalities import PERSONALITIES, get_personality, get_openai_personality
 
 import tiktoken
 from typing import List
+
+PERSONALITY = None
 
 MODELS = [
     "gpt-3.5-turbo",
@@ -38,7 +40,9 @@ def read_input(files: List[str] = None) -> str:
         content = "\n".join(contents)
     else:
         logging.info("Reading input from stdin")
-        print("Reading from stdin (press CTRL+D for linux/mac or Enter+CTRL+Z+Enter for windows to stop)...")
+        if os.isatty(sys.stdin.fileno()):
+            print("Current personality:", get_personality(PERSONALITY))
+            print("Reading from stdin (press CTRL+D for linux/mac or Enter+CTRL+Z+Enter for windows to stop)...")
         content = sys.stdin.read()
     return content
 
@@ -80,7 +84,8 @@ def process_text(model_name: str, input_files: List[str] = None) -> str:
 
     logging.info("Input has %d tokens", len(enc.encode(input_content)))
 
-    response = get_openai_response(model_name, [{"role": "user", "content": input_content}])
+    print(get_openai_personality(PERSONALITY))
+    response = get_openai_response(model_name, [get_openai_personality(PERSONALITY), {"role": "user", "content": input_content}])
     resp_str = write_output(response)
     logging.info("FileGPT finished, response has %d tokens", len(enc.encode(resp_str)))
     
@@ -102,8 +107,9 @@ def main():
             # list available personalities
             print(f"Available personalities: {', '.join(PERSONALITIES)}")
             return
-
     
+    global PERSONALITY
+    PERSONALITY = get_personality(args.personality)
     process_text(args.model, args.file)
 
 
