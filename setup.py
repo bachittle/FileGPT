@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="filegpt",
-    version="0.1.4",
+    version="0.1.5",
     description="A tool for autocompleting text files using OpenAI's GPT models.",
     url="https://github.com/bachittle/FileGPT",
     author="Bailey Chittle",
