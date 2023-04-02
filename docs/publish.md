@@ -5,10 +5,10 @@ To publish FileGPT to the Python Package Index (PyPI), follow these steps:
 ### Prerequisites
 
 1. Make sure you have a PyPI account. If you don't have one, [register here](https://pypi.org/account/register/).
-2. Install the necessary tools for publishing packages: `twine` and `setuptools`. You can do this by running the following command:
+2. Install the necessary tools for publishing packages: `twine`, `setuptools` and `wheel`. You can do this by running the following command:
 
    ```
-   pip install twine setuptools
+   pip install twine setuptools wheel
    ```
 
 ### Steps

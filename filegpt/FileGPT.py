@@ -6,8 +6,11 @@ import os
 import logging
 import tempfile
 
-from openai_wrapper import get_openai_response
-from personalities import PERSONALITIES, get_personality, get_openai_personality
+from filegpt.openai_wrapper import get_openai_response
+from filegpt.personalities import PERSONALITIES, get_personality, get_openai_personality
+
+# from openai_wrapper import get_openai_response
+# from personalities import PERSONALITIES, get_personality, get_openai_personality
 
 import tiktoken
 from typing import List
@@ -84,8 +87,11 @@ def process_text(model_name: str, input_files: List[str] = None) -> str:
 
     logging.info("Input has %d tokens", len(enc.encode(input_content)))
 
-    print(get_openai_personality(PERSONALITY))
-    response = get_openai_response(model_name, [get_openai_personality(PERSONALITY), {"role": "user", "content": input_content}])
+    personality = get_openai_personality(PERSONALITY)
+    messages = [{"role": "user", "content": input_content}]
+    if personality is not None:
+        messages.append(personality)
+    response = get_openai_response(model_name, messages)
     resp_str = write_output(response)
     logging.info("FileGPT finished, response has %d tokens", len(enc.encode(resp_str)))
     

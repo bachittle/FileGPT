@@ -96,13 +96,13 @@ add a new section to this readme detailing the new use of personalities
 
 FileGPT now includes personalities that allow you to adjust the style and format of the output. Currently, there are two available personalities:
 
-1. Coder: Generates code-based responses, usually with comments for user interaction.
+1. Py Coder: Generates code-based responses, usually with comments for user interaction. Currently only for python, will experiment with other langs later.
 2. Writer: Generates text-based content in Markdown format, suitable for documentation, blog posts, and other textual use cases.
 
 To specify a personality when using FileGPT, use the `-p` or `--personality` flag:
 
 ```
-filegpt -f input.txt -p coder
+filegpt -f input.txt -p py-coder
 filegpt -f input.txt -p writer
 ```
 
@@ -114,7 +114,7 @@ filegpt p-ls
 
 ### Example with Personalities
 
-Let's create an example input file for FileGPT using the 'coder' personality. Write the following content to a file named `code_input.txt`:
+Let's create an example input file for FileGPT using the 'py-coder' personality. Write the following content to a file named `code_input.txt`:
 
 ```
 # Calculate the factorial of a number
@@ -126,7 +126,7 @@ def factorial(n):
 Now, we can use FileGPT to autocomplete the code:
 
 ```
-filegpt -f code_input.txt -p coder
+filegpt -f code_input.txt -p py-coder
 ```
 
 Sample output:
